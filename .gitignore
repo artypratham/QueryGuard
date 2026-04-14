@@ -1,0 +1,10 @@
+
+# Ignore local environment secrets
+.env
+*.local
+
+
+.venv/
+__pycache__/
+uploads/
+node_modules/
