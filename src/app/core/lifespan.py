@@ -3,13 +3,17 @@
 from contextlib import asynccontextmanager
 from app.core.database import initialize_database, shutdown_database
 from app.core.config import get_settings
+import logging
+from fastapi import FastAPI
 
 
-settings = get_settings()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    
+    settings = get_settings()
+
     #Manage application Startup and shutdown
     #Startup  
     SQLAlchemyEngine, async_session_factory = await initialize_database(
