@@ -12,7 +12,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
     
-    database_url:       str
+    database_url:       str 
     anthropic_api_key:  str = "" #BYOK model
     api_key:            str = "" #single harcoded pi key for stage 1
     sandbox_image:      str = "queryguard-sandbox:latest"
@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     #)
     @property #@property decorator treats this method like an attribute, not a function. so whenever we call it we dont haveto use parenthese-> settings.cors_origins_list #this is like an attribute
     def cors_origins_list(self) -> list[str]:
-        return [o.strip() for o in self.cors_origins.spilt(",") if o.strip()]
+        return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
     #  o.strip() removes leading nad trailing whitespaces from each string, .split(",") splits hte list on ,if o.strip() excludes the empty strings,
 
 

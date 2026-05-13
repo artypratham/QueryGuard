@@ -1,31 +1,20 @@
-#Startup : sandbox cleanup + registry load
+#Startup : sandbox cleanup + registry load]
 
-from contextlib import asynccontextmanager
-from app.core.database import initialize_database, shutdown_database
-from app.core.config import get_settings
+#python imports
 import logging
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
+#imports from directory
+from app.core.config import get_settings
 
+# lifespan  module's job is to export the lifespan async generator,
+# So FastAPI app will not be created here, but in main.py and lifespan is wired in.
 
+logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    
     settings = get_settings()
 
-    #Manage application Startup and shutdown
-    #Startup  
-    SQLAlchemyEngine, async_session_factory = await initialize_database(
-        database_url = get_settings().database_url,
-        environment = "production",
-    )
-    app.state.engine = SQLAlchemyEngine
-    app.state.db_session = async_session_factory
     
-    yield
-    
-    #Shutdown
-    await shutdown_database()
-    
-app = FastAPI(lifespan = lifespan)
