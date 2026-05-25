@@ -31,10 +31,10 @@ def _make_engine():
     pool_pre_ping = True,   #Test Connection before using (cactches dropped connection)
     connect_args = {
         "ssl": "require",
-        "server_Settings" : {"application_nane": "queryguard-api"},
-        "statement_cache_size" : 0,
+        "server_settings": {"application_name": "queryguard-api"},
+        "statement_cache_size": 0,
         # For extra safety with PgBouncer transaction mode:
-        "prepared_statement_cache_size" : 0,
+        # "prepared_statement_cache_size" : 0,
     }
 )
 

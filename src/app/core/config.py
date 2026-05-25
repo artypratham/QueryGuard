@@ -12,15 +12,16 @@ class Settings(BaseSettings):
         extra="ignore",
     )
     
-    database_url:       str 
-    anthropic_api_key:  str = "" #BYOK model
-    api_key:            str = "" #single harcoded pi key for stage 1
-    sandbox_image:      str = "queryguard-sandbox:latest"
-    sandbox_timeout:    int = 30
-    csv_upload_dir:     str = "/home/deploy/queryguard-v2/uploads"
-    environment:        str = "development"
-    debug:              bool = False
-    cors_origins:        str = "" 
+    database_url:           str
+    database_url_direct:    str     = ""  # Optional; falls back to database_url in env.py
+    anthropic_api_key:      str     = "" #BYOK model
+    api_key:                str     = "" #single harcoded pi key for stage 1
+    sandbox_image:          str     = "queryguard-sandbox:latest"
+    sandbox_timeout:        int     = 30
+    csv_upload_dir:         str     = "/home/deploy/queryguard-v2/uploads"
+    environment:            str     = "development"
+    debug:                  bool    = False
+    cors_origins:           str     = "" 
     
     
     # This below property helps to provide clean list of cors_origins without having to split on ","

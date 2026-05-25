@@ -75,7 +75,7 @@ def upgrade() -> None:
             source_id               UUID    REFERENCES data_sources(source_id),
             question_text           TEXT    NOT NULL,
             generated_sql           TEXT,
-            goverened_sql           TEXT,
+            governed_sql            TEXT,
             viz_spec                JSONB,
             governance_diff         TEXT,
             governance_result       VARCHAR(20)
@@ -90,7 +90,7 @@ def upgrade() -> None:
             latency_codegen_ms      INTEGER,
             latency_governance_ms   INTEGER,
             latency_execution_ms    INTEGER,
-            tokens_latency_ms       INTEGER,
+            total_latency_ms        INTEGER,
             tokens_input            INTEGER,
             tokens_output           INTEGER,
             created_at              TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP

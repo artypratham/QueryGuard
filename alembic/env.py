@@ -22,8 +22,8 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-#Override sql alchemy.url from DATABASE_URL env var 
-database_url = os.environ["DATABASE_URL"]
+# Prefer the direct (non-pooler) URL for migrations; fall back to the pooler URL.
+database_url = database_url = os.environ.get("DATABASE_URL_DIRECT") or os.environ["DATABASE_URL"]
 config.set_main_option("sqlalchemy.url", database_url)
 
 

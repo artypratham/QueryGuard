@@ -1,0 +1,20 @@
+version: "1.0"
+organization: "caesar_corp"
+
+metrics:
+  revenue:
+    display_name: "Revenue (Net Recognized)"
+    description: >
+      Net Recognized Revenue from completed contracts,
+      excluding refunds,  credits,  and one-time  setup fees.
+      Uses recognized_at date,  not created_at.
+    required_filters:
+      - "status = 'paid'"
+      - "line_item_type != 'setup_fee'"
+    time_dimension: "recognized_at"
+    grain:  "per transaction"
+    owner:  "finance_team"
+    tags:
+      - finance
+      - board-reporting
+      - revenue
