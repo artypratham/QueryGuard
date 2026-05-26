@@ -6,7 +6,7 @@ class SemanticDefinition(BaseModel):
     metric_name:        str = Field(..., description="snake_case identifier") #... is pydantic Ellipsis which means that this Field is requried
     display_name:       str 
     description:        str
-    required_filters:   list[str] = Field(default_factory=list)
+    required_filters:   list[str] = Field(default_factory=list) #default_factory=list helps to create a fresh empty list for every instance of the class using the required filters, otherwise the same list object would have been shared by other instances of the class 
     time_dimension:     Optional[str]   = None
     grain:              Optional[str]   = None
     owner:              Optional[str]   = None
