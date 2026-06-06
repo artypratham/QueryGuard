@@ -58,7 +58,7 @@ def load_definitions_from_file(path : str | Path) -> list[SemanticDefinition]:
     for metric_name, body in metrics.items():
         if not isinstance(body, dict):
             continue
-        filters = body.get("required_filters", []) or []
+        filters = body.get("required_filters", []) or [] #The filters = body.get("required_filters", []) or [] looks redundant but isn't. body.get("required_filters", []) returns [] if the key is missing. But if the key is explicitly set to null in YAML (someone wrote required_filters: and stopped), .get() returns None, not []. The 'or []' collapses both None and [] to []. 
         _validate_required_filters(metric_name=metric_name, required_filters=filters)
         
         definitions.append(SemanticDefinition(
@@ -84,7 +84,7 @@ def load_definitions_from_directory(directoy: str | Path) -> list[SemanticDefini
         )
     all_defs : list[SemanticDefinition] = []
     for pattern in (".yaml" , ".yml"):
-        for path in sorted(directoy.glob(pattern=pattern)):
+        for path in sorted(directoy.glob(pattern=pattern)): #sorted(directory.glob(pattern)) does alphabetical iteration. Without sorted, the order is filesystem-dependent (sometimes inode order, sometimes mtime order, varies by OS).
             all_defs.extend(load_definitions_from_file(path=path))
             
     return all_defs
