@@ -65,6 +65,3 @@ class Settings(BaseSettings):
 def get_settings() -> Settings:
     return Settings()
 
-@dataclass
-class SearchConfig:
-    top_k: int =  top_k
