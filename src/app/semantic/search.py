@@ -52,7 +52,7 @@ class Metric_Search_Engine:
         # lazy Import:  we will not use torch for such modules that only needs to know search result exists
         from sentence_transformers import SentenceTransformer
         
-        
+        #NOTE: Heavyweight ML imports always go inside the function that needs them, never at module top.
         # Run the blocking function in the executor without stopping the event loop
         loop = asyncio.get_running_loop()
         
@@ -66,6 +66,9 @@ class Metric_Search_Engine:
         self._definitions = definitions
         search_texts = [self._build_search_text(d) for d in definitions]
                
+        #NOTE: Encoding text is the expensive operation (~50ms per encode on CPU). 
+        # If we re-encoded the definitions on every query, we'd pay ~50ms × N definitions per query. 
+        # Instead, we encode once at startup, store the result in self._embeddings as a NumPy matrix, and then each query becomes one encode + one matrix multiply. 
         if search_texts:
             raw = await loop.run_in_executor(
                 None,
@@ -76,9 +79,9 @@ class Metric_Search_Engine:
                     batch_size=self.settings.semantic_Searcj_batch_size,
                 ),
             )
-            self._embeddings = np.ndarray(raw, dtype=np.float32)
+            self._embeddings = np.ndarray(raw, dtype=np.float32) #store the result in self._embeddings as a NumPy matrix
         else:
-            self._embeddings = np.zeros((0, EMBEDDING_DIM), dtype=np.float32)
+            self._embeddings = np.zeros((0, EMBEDDING_DIM), dtype=np.float32) 
         
 
         logger.info(
@@ -116,11 +119,12 @@ class Metric_Search_Engine:
             return []
         
         
+        #NOTE: Anytime we will call a CPU heavy function from async code ,it goes through the executor.
         #Embed the query (this is a cpu blocking operation hence deligating to a threadpool)
         loop = asyncio.get_running_loop()
         query_embedding = loop.run_in_executor(
             None,
-            lambda: self._model.encode(
+            lambda: self._model.encode( #EVEN THOUGH _model.encode() doesnt do I/O, it still blocks the event loop because inside the encode torch is busy doing the matrix maultiplication on cpu that an async event loop cant preempt.
                 [query],                
                 normalize_embeddings=True,#NOTE: Everything we embed has to be normalized because if we dont the generated vectors might be useless due to extreme noice(negative or zero values) due to multiple times going through various attention, ffn blocks 
                 show_progress_bar=False,
@@ -138,6 +142,8 @@ class Metric_Search_Engine:
         #Pre-normalized vectors simplify the cosine similarity to simple dot product
         #Because pre normalization of vectors makes its length to 1 so in cosine similarity formula dif the denomintor becomes 1 then only dot product is left as the major calculation
         similarity_scores = np.dot(self._embeddings, query_embedding)
+        # NOTE: The matrix multiply is essentially free (<1ms for thousands of rows). 
+        # This is the same idea behind every vector database.The index is built once and reused.
 
         # Finding top results
         top_indices = np.argsort(similarity_scores)[::-1][:top_k]
