@@ -5,6 +5,13 @@ from app.core.config import Settings, get_settings
 
 logger = logging.getLogger(__name__)
 
+# This wrapper/orchestrator layer exists because the calls for search should never have to know whats the underlying mechanism or models for search engine, it can change in future
+# In Stage 2 I might add a query patterns cache (skip embedding entirely for known queries). 
+# In Stage 3 I might swap to Pinecone for million-definition scale. 
+# Each of these changes touches MetricSearchEngine but doesn't touch SemanticRegistry.lookup(),
+# which means it doesn't touch the orchestrator.Hence this abstraction wrapper over Metric_SearchEngine class.
+
+#This allows us to have one interface and swappable underlying backends - program to an interface not to an implementation pattern.
 class SemanticRegistry:
     def __init__(
         self,
@@ -31,7 +38,7 @@ class SemanticRegistry:
             matched = []
             for result in results:
                 d = dict(result.definition)
-                d["_similarity"] = result.similarity 
+                d["_similarity"] = result.similarity # for audit,I can later forensically inspect why a query matched the definition it did.
                 matched.append(d)
             
             if matched:
