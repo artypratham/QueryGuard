@@ -23,11 +23,7 @@ class SearchResult:
     definition  : str
 
 
-
-
 class Metric_Search_Engine:
-    
-
     
     def __init__ (self, settings : Settings | None = None) :
         #Args: settings -> Configuration object. If None, settins will be loaded from environment via get_settings()
@@ -46,7 +42,6 @@ class Metric_Search_Engine:
             f"threshold={settings.semantic_search_threshold}"
         )
 
-        
         
     async def initialize( self ,definitions: list[dict]) -> None:
         # lazy Import:  we will not use torch for such modules that only needs to know search result exists
